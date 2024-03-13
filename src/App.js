@@ -1,49 +1,62 @@
 import TaskCreate from "./components/TaskCreate";
 import TaskList from "./components/TaskList";
 import "../src/components/TaskCreate.css"
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import { getTodos, addTodo, deleteTodo, updateTodo } from './api';
 
 function App() {
   const [tasks,setTasks] = useState([])
 
-  const createTask = (term,taskDesc)=>{
-    const createdTask = [
-      ...tasks,{
-        id:Math.round(Math.random()*99999),
-        term,
-        taskDesc
+  useEffect(() => {
+    async function fetchTodos() {
+      const todos = await getTodos();
+      setTasks(todos);
+    }
+    fetchTodos();
+  }, []);
+
+  
+  const createTask = async (term, taskDesc) => {
+    // Yeni görevi API'ye ekle
+    const newTodo = { term, taskDesc };
+    try {
+        const createdTodo = await addTodo(newTodo);
+        const task = { id: createdTodo.insertedId, term: newTodo.term, taskDesc: newTodo.taskDesc };
+        setTasks([...tasks, task]); // Varsayılan olarak kabul ediyorum ki tasks bir state değişkenidir.
+    } catch (error) {
+        console.error("Görev eklenirken bir hata oluştu:", error);
+    }
+};
+
+
+  const deleteTaskById = async (id) => {
+    // Görevi API'den sil
+    await deleteTodo(id);
+    const updatedTasks = tasks.filter((task) => task._id !== id);
+    setTasks(updatedTasks); // Silinen görevi yerel state'den kaldır
+  };
+
+  const editTaskById = async (id, updatedTerm, updatedDesc) => {
+    // Görevi API'de güncelle
+    const updatedTodo = { term: updatedTerm, taskDesc: updatedDesc };
+    await updateTodo(id, updatedTodo);
+
+    const updatedTasks = tasks.map((task) => {
+      if (task._id === id) {
+        return { ...task, term: updatedTerm, taskDesc: updatedDesc };
       }
-    ]
+      return task;
+    });
+    setTasks(updatedTasks); // Güncellenen görevi yerel state'de güncelle
+  };
 
-  setTasks(createdTask) //burayı pek anlamadım
-
-}
-
-  const deleteTaskById=(id)=>{
-    //console.log(id)
-    const afterDeletingTasks= tasks.filter((task)=>{
-      return task.id !== id
-    })
-    setTasks(afterDeletingTasks)
-  }
-
-  const editTaskById=(id,updatedTerm,updatedDesc)=>{
-    //console.log(id)
-    const updatedTasks = tasks.map((task)=>{
-      if(task.id === id){
-        return{id,term:updatedTerm,taskDesc:updatedDesc}
-      }
-      return task
-    })
-    setTasks(updatedTasks)
-  }
   
 
   return (
     <div className="App">
       <TaskCreate onCreate={createTask}/>
       <h1>Görevler</h1>
-      <TaskList tasks={tasks} onDelete={deleteTaskById} onUpdate={editTaskById} />
+      <TaskList tasks={tasks} onDelete={deleteTaskById} updateTask={editTaskById} />
     </div>
   );
 }

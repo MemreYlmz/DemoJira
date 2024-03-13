@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import "./TaskCreate.css"
+import { addTodo, updateTodo } from '../api'
 
 function TaskCreate({onCreate,task,taskFormUpdate,onUpdate}) {
     const [term,setTerm] = useState(task ? task.term : "")
@@ -12,16 +13,32 @@ function TaskCreate({onCreate,task,taskFormUpdate,onUpdate}) {
     const handleTaskChange = (event)=>{
         setTaskDesc(event.target.value)
     }
-    const handleSubmit = (event)=>{
-        event.preventDefault()
-        if(taskFormUpdate){
-            onUpdate(task.id,term,taskDesc)
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+    
+        if (taskFormUpdate) {
+          try {
+            onUpdate(term, taskDesc);
+            setTerm("");
+            setTaskDesc("");
+          } catch (error) {
+            console.error('Error updating task:', error);
+          }
         }
-        else{onCreate(term,taskDesc)}
-        
-        setTerm("")
-        setTaskDesc("")
-    }
+        // Değilse, yeni bir görev oluştur
+        else {
+         
+          try {
+
+            onCreate(term,taskDesc);
+            setTerm("");
+            setTaskDesc("");
+          } catch (error) {
+            console.error('Error creating task:', error);
+          }
+        }
+      }
 
 
   return (

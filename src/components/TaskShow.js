@@ -3,20 +3,19 @@ import "./TaskCreate.css"
 import TaskCreate from './TaskCreate'
 
 
-function TaskShow({task,onDelete,onUpdate}) {
+function TaskShow({task,onDelete,updateTask}) {
     const [showEdit,setShowEdit] = useState(false)
-
 
     const handleUpdate=()=>{
         setShowEdit(!showEdit)
     }
 
     const handleDelete=()=>{
-        onDelete(task.id)
+        onDelete(task._id)
     }
-    const handleSubmit=(id,updatedTerm,updatedDesc)=>{
+    const handleSubmit=(updatedTerm,updatedDesc)=>{
         setShowEdit(false)
-        onUpdate(id,updatedTerm,updatedDesc)
+        updateTask(task._id,updatedTerm,updatedDesc)
     }
 
   return (
