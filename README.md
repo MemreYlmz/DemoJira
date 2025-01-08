@@ -35,4 +35,4 @@ Bu proje, yapılacaklar listesi (todo) oluşturmanıza ve bu listeyi yönetmeniz
 ---
 
 # Ekran Görüntüsü
-(./src/images/image.png)
+![Proje Ekran Görüntüsü](./src/images/image.png)
