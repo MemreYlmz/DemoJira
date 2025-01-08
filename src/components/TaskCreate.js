@@ -60,7 +60,7 @@ function TaskCreate({onCreate,task,taskFormUpdate,onUpdate}) {
         <form className='taskCreate-form'>
             <label className='task-label'>Başlık</label>
             <input value={term} onChange={handleChange} className='task-input' type='text' ></input>
-            <label className='task-label'>Başlık</label>
+            <label className='task-label'>Görev</label>
             <textarea value={taskDesc} onChange={handleTaskChange} className='task-input' />
             <button onClick={handleSubmit} className='task-button' type='submit' >Oluştur</button>
         </form>
